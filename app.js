@@ -25,6 +25,10 @@ function initializeGrid() {
 }
 
 function mousedown(draggable, e) {
+  if (typeof e.touches !== "undefined") {
+    e.clientX = e.touches[0].clientX
+    e.clientY = e.touches[0].clientY
+  }
   offsetX = e.clientX - parseInt(draggable.style.left || 0);
   offsetY = e.clientY - parseInt(draggable.style.top || 0);
   isDragging = true;
@@ -33,6 +37,10 @@ function mousedown(draggable, e) {
 }
 
 function mousemove(e) {
+  if (typeof e.touches !== "undefined") {
+    e.clientX = e.touches[0].clientX
+    e.clientY = e.touches[0].clientY
+  }
   if (!isDragging || !currentElement) return;
 
   let newLeft = e.clientX - offsetX;

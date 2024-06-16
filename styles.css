@@ -1,4 +1,4 @@
-@import "https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css";
+/* @import "https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css"; */
 
 body,
 html {
@@ -9,7 +9,6 @@ html {
     align-items: center;
     background-color: #f0f0f0;
 }
-
 
 #fridge {
     height: 100%;
@@ -22,7 +21,6 @@ html {
     background-position: top left;
     background-size: 500px;
 }
-
 
 #fridgeSpace {
     width: 250px;
@@ -55,7 +53,6 @@ html {
     left: 0;
 }
 
-
 @keyframes bounce {
     0% {
         transform: translate(0, 0);
@@ -84,17 +81,4 @@ html {
 
 .bounce {
     animation: bounce 0.5s;
-}
-
-.magnet {
-    width: 80px;
-    height: 80px;
-    background-color: #3b82f6;
-    color: white;
-    border-radius: 4px;
-    position: absolute;
-    border: 1px solid #d3d3d3;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* transition: opacity 0.3s ease; */
 }
