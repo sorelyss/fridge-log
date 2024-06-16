@@ -24,21 +24,15 @@ function initializeGrid() {
   });
 }
 
-initializeGrid();
+function mousedown(draggable, e) {
+  offsetX = e.clientX - parseInt(draggable.style.left || 0);
+  offsetY = e.clientY - parseInt(draggable.style.top || 0);
+  isDragging = true;
+  currentElement = draggable;
+  draggable.style.cursor = 'grabbing';
+}
 
-draggables.forEach(draggable => {
-  draggable.addEventListener('mousedown', (e) => {
-    offsetX = e.clientX - parseInt(draggable.style.left || 0);
-    offsetY = e.clientY - parseInt(draggable.style.top || 0);
-    isDragging = true;
-    currentElement = draggable;
-    draggable.style.cursor = 'grabbing';
-  });
-});
-
-
-
-document.addEventListener('mousemove', (e) => {
+function mousemove(e) {
   if (!isDragging || !currentElement) return;
 
   let newLeft = e.clientX - offsetX;
@@ -64,15 +58,15 @@ document.addEventListener('mousemove', (e) => {
   currentElement.style.left = newLeft + 'px';
   currentElement.style.top = newTop + 'px';
 
-});
+}
 
-document.addEventListener('mouseup', () => {
+function mouseup() {
   if (isDragging) {
     isDragging = false;
     currentElement.style.cursor = 'grab';
     currentElement = null;
   }
-});
+}
 
 function bounce(draggable) {
   draggable.classList.add('bounce');
@@ -80,3 +74,19 @@ function bounce(draggable) {
     draggable.classList.remove('bounce');
   }, 500);
 }
+
+initializeGrid();
+
+// PC events
+draggables.forEach(draggable => {
+  draggable.addEventListener('mousedown', (e) => mousedown(draggable, e));
+});
+document.addEventListener('mousemove', (e) => mousemove(e));
+document.addEventListener('mouseup', () => mouseup());
+
+// Phone events
+draggables.forEach(draggable => {
+  draggable.addEventListener('touchstart', (e) => mousedown(draggable, e));
+});
+document.addEventListener('touchmove', (e) => mousemove(e));
+document.addEventListener('touchend', () => mouseup());
