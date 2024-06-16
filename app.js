@@ -1,40 +1,82 @@
-// Make the DIV element draggable:
-dragElement(document.getElementById("magnet"));
+const draggables = document.querySelectorAll('.draggable');
+const container = document.getElementById('fridgeSpace');
 
-function dragElement(elmnt) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-
-  // otherwise, move the DIV from anywhere inside the DIV:
-  elmnt.onmousedown = dragMouseDown;
+let offsetX, offsetY, isDragging = false, currentElement = null;
 
 
-  function dragMouseDown(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // get the mouse cursor position at startup:
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
-    document.onmousemove = elementDrag;
+function initializeGrid() {
+  // Function to position the draggable elements in a grid initially
+  const gap = 10; // Gap between grid items
+  const containerRect = container.getBoundingClientRect();
+  const itemWidth = draggables[0].offsetWidth;
+  const itemHeight = draggables[0].offsetHeight;
+  const columns = Math.floor((containerRect.width + gap) / (itemWidth + gap));
+
+  draggables.forEach((draggable, index) => {
+    const col = index % columns;
+    const row = Math.floor(index / columns);
+
+    const left = col * (itemWidth + gap);
+    const top = row * (itemHeight + gap);
+
+    draggable.style.left = `${left}px`;
+    draggable.style.top = `${top}px`;
+  });
+}
+
+initializeGrid();
+
+draggables.forEach(draggable => {
+  draggable.addEventListener('mousedown', (e) => {
+    offsetX = e.clientX - parseInt(draggable.style.left || 0);
+    offsetY = e.clientY - parseInt(draggable.style.top || 0);
+    isDragging = true;
+    currentElement = draggable;
+    draggable.style.cursor = 'grabbing';
+  });
+});
+
+
+
+document.addEventListener('mousemove', (e) => {
+  if (!isDragging || !currentElement) return;
+
+  let newLeft = e.clientX - offsetX;
+  let newTop = e.clientY - offsetY;
+
+  if (newLeft < 0) {
+    newLeft = 0;
+    bounce(currentElement);
+
+  } else if (newLeft + currentElement.offsetWidth > container.offsetWidth) {
+    newLeft = container.offsetWidth - currentElement.offsetWidth;
+    bounce(currentElement);
   }
 
-  function elementDrag(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  if (newTop < 0) {
+    newTop = 0;
+    bounce(currentElement);
+  } else if (newTop + currentElement.offsetHeight > container.offsetHeight) {
+    newTop = container.offsetHeight - currentElement.offsetHeight;
+    bounce(currentElement);
   }
 
-  function closeDragElement() {
-    // stop moving when mouse button is released:
-    document.onmouseup = null;
-    document.onmousemove = null;
+  currentElement.style.left = newLeft + 'px';
+  currentElement.style.top = newTop + 'px';
+
+});
+
+document.addEventListener('mouseup', () => {
+  if (isDragging) {
+    isDragging = false;
+    currentElement.style.cursor = 'grab';
+    currentElement = null;
   }
+});
+
+function bounce(draggable) {
+  draggable.classList.add('bounce');
+  setTimeout(() => {
+    draggable.classList.remove('bounce');
+  }, 500);
 }
